@@ -5,10 +5,10 @@ window.geometry('300x330')
 
 canvas=tkinter.Canvas(window,height=300,width=300)
 canvas.place(x=0,y=0)
+
 for i in range(1,30):
     canvas.create_line(0,10*i,300,10*i,fill="grey")
-    canvas.create_line(10*i,0,10*i,300,fill="grey")
-    
+    canvas.create_line(10*i,0,10*i,300,fill="grey")    
 canvas.create_line(0,300,300,300,fill="black")
 
 dest=[3,1]
@@ -20,12 +20,17 @@ wall=[[5,0],[5,1],[5,2],[5,3],[5,4],
       [18,20],[19,20],[20,20],[21,20],[22,20],
       [18,21],[18,22],[18,23],[18,24],
       [0,24],[1,24],[2,24],[3,24],[4,24],[5,24],[6,24],[7,24],[8,24],[9,24],[10,24],[11,24],[12,24],[13,24],[14,24],[15,24],[16,24],[17,24]]
-path=[]
 
-canvas.create_rectangle(source[0]*10,source[1]*10,source[0]*10+10,source[1]*10+10,fill="red")
-canvas.create_rectangle(dest[0]*10,dest[1]*10,dest[0]*10+10,dest[1]*10+10,fill="lightgreen")
+def drawSquare(coord,color):
+    x=coord[0]
+    y=coord[1]
+    canvas.create_rectangle(x*10, y*10, x*10+10, y*10+10, fill=color)
+
+drawSquare(source, "red")
+drawSquare(dest, "lightgreen")
+
 for brick in wall:
-    canvas.create_rectangle(brick[0]*10,brick[1]*10,brick[0]*10+10,brick[1]*10+10,fill="black")
+    drawSquare(brick, "black")
 
 def extensions(current,currlength):
     last=current[-1]
@@ -57,18 +62,22 @@ def extensions(current,currlength):
         nlengths.append(currlength+1.41421)
     return npaths, nlengths
 
+def arialDist(currentPos):
+    return ( (currentPos[0]-dest[0])**2 + (currentPos[1]-dest[1])**2 )**0.5
+
 def search():
     agenda = [ [source] ]
     exlist = []
     plengths=[0]
     while len(agenda)>0:
-        best = plengths[0] + (( (agenda[0][-1][0]-dest[0])**2 + (agenda[0][-1][1]-dest[1])**2 )**0.5)
+        best = plengths[0] + arialDist(agenda[0][-1])
         currindex = 0
         for i in range(1,len(agenda)):
-            if (plengths[i]+(((agenda[i][-1][0]-dest[0])**2 + (agenda[i][-1][1]-dest[1])**2)**0.5)) < best:
-                best = plengths[i]+(((agenda[i][-1][0]-dest[0])**2 + (agenda[i][-1][1]-dest[1])**2)**0.5)
+            if (plengths[i] + arialDist(agenda[i][-1])) < best:
+                best = plengths[i] + arialDist(agenda[i][-1])
                 currindex = i
         current = agenda.pop(currindex)
+        #drawSquare(current[-1], "cyan")
         currlength = plengths.pop(currindex)
         exlist += [current[-1]]
         if current[-1]==dest:
@@ -82,15 +91,15 @@ def search():
                 agenda.remove(p)
 
 def showpath():
+    searchButton.configure(state="disabled")
     path = search()
     if path==None:
-        print("no path")
+        print("no path found")
         return None
     path.pop(0)
     path.pop(-1)
     for step in path:
-        canvas.create_rectangle(step[0]*10,step[1]*10,step[0]*10+10,step[1]*10+10,fill="blue")
-    searchButton.configure(state="disabled")
+        drawSquare(step, "blue")
 
 searchButton=tkinter.Button(window,text="search path",command=showpath)
 searchButton.place(x=50,y=302)
