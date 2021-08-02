@@ -5,7 +5,7 @@
 <br>
 <br>**Upon clicking "search path":** path is displayed by algorithm as blue-tiles<br>
 ![image](https://user-images.githubusercontent.com/73568701/126738509-0fcea969-e194-4f63-b92b-61d134bd5700.png)
-<br>
+<br><br>
 **Video:**
 https://user-images.githubusercontent.com/73568701/127793594-d88c4954-237b-44ec-8ab4-4ec115ebb592.mp4
 <br><br>
